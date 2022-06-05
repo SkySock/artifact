@@ -143,8 +143,9 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
+        'apps.artifact_auth.services.auth_backend.AuthBackend',
         # 'rest_framework_simplejwt.authentication.JWTAuthentication',
-        'rest_framework.authentication.TokenAuthentication',
+        # 'rest_framework.authentication.TokenAuthentication',
         # 'rest_framework.authentication.SessionAuthentication',
         # 'rest_framework.authentication.BasicAuthentication',
     ),
@@ -158,7 +159,7 @@ TELEGRAM_AUTH = {
 
 JWT = {
     'ALGORITHM': 'HS256',
-    'ACCESS_TOKEN_EXPIRE_MINUTES': 60 * 24,
+    'ACCESS_TOKEN_EXPIRE_MINUTES': 60 * 24 * 7,
 }
 
 CORS_ALLOWED_ORIGINS = list(os.environ.get("CORS_ALLOWED_ORIGINS", "127.0.0.1").split())

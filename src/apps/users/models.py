@@ -1,27 +1,14 @@
+from django.core.validators import FileExtensionValidator
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 from django.contrib.auth.base_user import AbstractBaseUser, BaseUserManager
 from django.contrib.auth.models import AbstractUser, PermissionsMixin
 
+from base.services import get_path_upload_profile_image, get_default_profile_image, validate_size_image
 from .validators import ArtUnicodeUsernameValidator
 
 
-class ArtUserManager(BaseUserManager):
-    def create_user(self, email, username, password=None):
-        if not username:
-            raise ValueError('The given username must be set')
-
-        user = self.model(
-            email=self.normalize_email(email),
-            username=username,
-        )
-
-        user.set_password(password)
-        user.save(using=self._db)
-        return user
-
-
-class ArtifactUser(AbstractBaseUser):
+class ArtifactUser(models.Model):
     username_validator = ArtUnicodeUsernameValidator()
 
     telegram_id = models.BigIntegerField(unique=True, null=True, blank=True)
@@ -38,21 +25,24 @@ class ArtifactUser(AbstractBaseUser):
     )
     display_name = models.CharField(max_length=150, blank=True)
     email = models.EmailField(max_length=150, unique=True, null=True, blank=True)
-    join_date = models.DateTimeField(auto_now_add=True)
     bio = models.TextField(max_length=2000, blank=True)
+    avatar = models.ImageField(
+        max_length=255,
+        upload_to=get_path_upload_profile_image,
+        blank=True,
+        default=get_default_profile_image,
+        validators=[FileExtensionValidator(allowed_extensions=['jpg', 'png', ]), validate_size_image]
+    )
+    date_joined = models.DateTimeField(verbose_name='date joined', auto_now_add=True)
 
     EMAIL_FIELD = "email"
     USERNAME_FIELD = "username"
 
-    objects = ArtUserManager()
+    # objects = ArtUserManager()
 
-    @property
-    def is_authenticated(self):
-        return True
-
-    def clean(self):
-        super().clean()
-        self.email = self.__class__.objects.normalize_email(self.email)
+    # @property
+    # def is_authenticated(self):
+    #     return True
 
     def __str__(self):
         return str(self.pk)
@@ -61,3 +51,10 @@ class ArtifactUser(AbstractBaseUser):
 class SocialLink(models.Model):
     user = models.ForeignKey(ArtifactUser, on_delete=models.CASCADE, related_name='social_links')
     link = models.URLField(max_length=100)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=['user', 'link'], name='unique_links', ),
+        ]
+
+        ordering = ['user']

@@ -29,7 +29,6 @@ def check_telegram_auth(telegram_user: serializers.TelegramAuthSerializer):
             defaults={
                 'display_name': f'{telegram_user.data["first_name"]} {telegram_user.data["last_name"]}',
                 'username': generate_unique_username(telegram_user.data["username"]),
-                'password': ArtifactUser.objects.make_random_password(length=16)
             },
         )
         return base_auth.create_token(user.pk)
