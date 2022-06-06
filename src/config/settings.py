@@ -44,6 +44,7 @@ INSTALLED_APPS = [
 
     'apps.users',
     'apps.artifact_auth',
+    'apps.posts',
 ]
 
 MIDDLEWARE = [
@@ -144,10 +145,6 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'apps.artifact_auth.services.auth_backend.AuthBackend',
-        # 'rest_framework_simplejwt.authentication.JWTAuthentication',
-        # 'rest_framework.authentication.TokenAuthentication',
-        # 'rest_framework.authentication.SessionAuthentication',
-        # 'rest_framework.authentication.BasicAuthentication',
     ),
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
     'PAGE_SIZE': 10,
