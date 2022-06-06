@@ -38,14 +38,8 @@ class ArtifactUser(models.Model):
     EMAIL_FIELD = "email"
     USERNAME_FIELD = "username"
 
-    # objects = ArtUserManager()
-
-    # @property
-    # def is_authenticated(self):
-    #     return True
-
     def __str__(self):
-        return str(self.pk)
+        return f"User {self.username}(id: {str(self.pk)})"
 
 
 class SocialLink(models.Model):
@@ -58,3 +52,23 @@ class SocialLink(models.Model):
         ]
 
         ordering = ['user']
+
+
+class UserFollowing(models.Model):
+    user = models.ForeignKey(
+        ArtifactUser, on_delete=models.CASCADE, related_name='following'
+    )
+    following_user = models.ForeignKey(
+        ArtifactUser, on_delete=models.CASCADE, related_name='followers'
+    )
+    created = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=['user', 'following_user'],  name='unique_followers',),
+        ]
+
+        ordering = ['-created']
+
+    def __str__(self):
+        return f"{self.user} follows {self.following_user}"
