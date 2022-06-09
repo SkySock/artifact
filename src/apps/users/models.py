@@ -38,6 +38,10 @@ class ArtifactUser(models.Model):
     EMAIL_FIELD = "email"
     USERNAME_FIELD = "username"
 
+    @property
+    def is_authenticated(self):
+        return True
+
     def __str__(self):
         return f"User {self.username}(id: {str(self.pk)})"
 

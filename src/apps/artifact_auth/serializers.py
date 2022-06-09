@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from apps.users.models import ArtifactUser
 
 
 class TelegramAuthSerializer(serializers.Serializer):
@@ -12,3 +13,15 @@ class TelegramAuthSerializer(serializers.Serializer):
     hash = serializers.CharField()
     auth_date = serializers.IntegerField()
     photo_url = serializers.URLField(required=False)
+
+
+class UserDetailSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = ArtifactUser
+        fields = (
+            'id',
+            'username',
+            'display_name',
+            'avatar',
+        )
