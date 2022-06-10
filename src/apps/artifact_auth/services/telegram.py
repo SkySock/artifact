@@ -27,7 +27,7 @@ def check_telegram_auth(telegram_user: serializers.TelegramAuthSerializer):
         user, _ = ArtifactUser.objects.get_or_create(
             telegram_id=telegram_user.data['id'],
             defaults={
-                'display_name': f'{telegram_user.data["first_name"]} {telegram_user.data["last_name"]}',
+                'display_name': f'{telegram_user.data.get("first_name", "")} {telegram_user.data.get("last_name", "")}',
                 'username': generate_unique_username(telegram_user.data["username"]),
             },
         )
