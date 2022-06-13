@@ -1,3 +1,4 @@
+from drf_spectacular.utils import extend_schema
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.exceptions import AuthenticationFailed
@@ -6,10 +7,14 @@ from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 
 from base.permissions import IsOptions
-from .serializers import TelegramAuthSerializer, UserDetailSerializer
+from .serializers import TelegramAuthSerializer, UserDetailSerializer, TelegramAuthResponseSerializer
 from .services.telegram import check_telegram_auth
 
 
+@extend_schema(
+        request=TelegramAuthSerializer,
+        responses=TelegramAuthResponseSerializer,
+    )
 @api_view(['POST'])
 def telegram_auth(request):
     serializer_class = TelegramAuthSerializer

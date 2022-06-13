@@ -15,6 +15,11 @@ class TelegramAuthSerializer(serializers.Serializer):
     photo_url = serializers.URLField(required=False)
 
 
+class TelegramAuthResponseSerializer(serializers.Serializer):
+    user_id = serializers.IntegerField()
+    access_token = serializers.CharField()
+
+
 class UserDetailSerializer(serializers.ModelSerializer):
 
     class Meta:

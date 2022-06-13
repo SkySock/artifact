@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'rest_framework',
+    'drf_spectacular',
     'corsheaders',
 
     'apps.users',
@@ -50,7 +51,9 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+
     "corsheaders.middleware.CorsMiddleware",
+
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -147,7 +150,15 @@ REST_FRAMEWORK = {
         'apps.artifact_auth.services.auth_backend.AuthBackend',
     ),
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
     'PAGE_SIZE': 10,
+}
+
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'Artifact API',
+    'DESCRIPTION': 'Платформа для монетизации и продвижения творческого контента',
+    'VERSION': '0.1.0',
+    'SERVE_INCLUDE_SCHEMA': False,
 }
 
 TELEGRAM_AUTH = {
@@ -160,3 +171,4 @@ JWT = {
 }
 
 CORS_ALLOWED_ORIGINS = list(os.environ.get("CORS_ALLOWED_ORIGINS", "127.0.0.1").split())
+CORS_ALLOW_CREDENTIALS = True
