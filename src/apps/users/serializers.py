@@ -28,6 +28,34 @@ class UserBaseSerializer(serializers.ModelSerializer):
         return UserFollowing.objects.filter(following_user=obj).count()
 
 
+class ProfileSerializer(serializers.ModelSerializer):
+    """
+    Profile detail serializer
+    """
+    avatar = serializers.ImageField(read_only=True)
+    followers_count = serializers.SerializerMethodField()
+    following_count = serializers.SerializerMethodField()
+
+    class Meta:
+        model = ArtifactUser
+        fields = (
+            'id',
+            'username',
+            'display_name',
+            'bio',
+            'followers_count',
+            'following_count',
+            'avatar',
+        )
+
+
+    def get_followers_count(self, obj):
+        return UserFollowing.objects.filter(following_user=obj).count()
+
+    def get_following_count(self, obj):
+        return UserFollowing.objects.filter(user=obj).count()
+
+
 class UserFollowingSerializer(serializers.ModelSerializer):
     following_user = UserBaseSerializer(read_only=True)
 
