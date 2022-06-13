@@ -1,3 +1,4 @@
+from drf_spectacular.utils import extend_schema_field
 from rest_framework import serializers
 from .models import UserFollowing, ArtifactUser
 
@@ -14,6 +15,7 @@ class UserBaseSerializer(serializers.ModelSerializer):
         model = ArtifactUser
         fields = ('id', 'username', 'display_name', 'followers_count', 'avatar', 'is_followed')
 
+    @extend_schema_field(field=serializers.BooleanField())
     def get_is_followed(self, obj):
         request = self.context.get('request')
         if not request:
@@ -24,6 +26,7 @@ class UserBaseSerializer(serializers.ModelSerializer):
             return False
         return True
 
+    @extend_schema_field(field=serializers.IntegerField())
     def get_followers_count(self, obj):
         return UserFollowing.objects.filter(following_user=obj).count()
 
@@ -48,12 +51,20 @@ class ProfileSerializer(serializers.ModelSerializer):
             'avatar',
         )
 
-
+    @extend_schema_field(field=serializers.IntegerField())
     def get_followers_count(self, obj):
         return UserFollowing.objects.filter(following_user=obj).count()
 
+    @extend_schema_field(field=serializers.IntegerField())
     def get_following_count(self, obj):
         return UserFollowing.objects.filter(user=obj).count()
+
+
+class UserProfileImageSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = ArtifactUser
+        fields = ('avatar',)
 
 
 class UserFollowingSerializer(serializers.ModelSerializer):
