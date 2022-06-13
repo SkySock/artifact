@@ -1,4 +1,5 @@
 import django.db
+from drf_spectacular.utils import extend_schema
 from rest_framework import views, generics, permissions, response
 from ..models import UserFollowing, ArtifactUser
 from ..serializers import UserFollowingSerializer, UserFollowersSerializer
@@ -36,6 +37,10 @@ class FollowView(views.APIView):
     """
     permission_classes = (permissions.IsAuthenticated | art_permissions.IsOptions, )
 
+    @extend_schema(
+        description='Check following',
+        responses=bool,
+    )
     def get(self, request, pk):
         try:
             ArtifactUser.objects.get(id=pk)
@@ -48,17 +53,25 @@ class FollowView(views.APIView):
             return response.Response(False)
         return response.Response(True)
 
+    @extend_schema(
+        description='Follow',
+        responses=bool,
+    )
     def post(self, request, pk):
         try:
             user = ArtifactUser.objects.get(id=pk)
             UserFollowing.objects.create(user=request.user, following_user=user)
         except ArtifactUser.DoesNotExist:
-            return response.Response(status=404)
+            return response.Response({'error': 'User does not exist'}, status=404)
         except django.db.IntegrityError:
             return response.Response(True, status=200)
 
         return response.Response(True, status=201)
 
+    @extend_schema(
+        description='Unfollow',
+        responses={204: bool}
+    )
     def delete(self, request, pk):
         try:
             follow = UserFollowing.objects.get(
