@@ -31,6 +31,30 @@ class UserFollowersViewSet(generics.ListAPIView):
         return UserFollowing.objects.filter(following_user=self.request.user)
 
 
+class FollowingUsersByIdViewSet(generics.ListAPIView):
+    """
+    List of subscriptions by id
+    """
+    permission_classes = (permissions.IsAuthenticated | art_permissions.IsOptions,)
+    serializer_class = UserFollowingSerializer
+    pagination_class = PaginationUsers
+
+    def get_queryset(self):
+        return UserFollowing.objects.filter(user=self.kwargs.get(self.lookup_field))
+
+
+class FollowersByIdViewSet(generics.ListAPIView):
+    """
+    List of subscribers by id
+    """
+    permission_classes = (permissions.IsAuthenticated | art_permissions.IsOptions,)
+    serializer_class = UserFollowersSerializer
+    pagination_class = PaginationUsers
+
+    def get_queryset(self):
+        return UserFollowing.objects.filter(following_user=self.kwargs.get(self.lookup_field))
+
+
 class FollowView(views.APIView):
     """
     Check, follow, unfollow
