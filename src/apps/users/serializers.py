@@ -1,6 +1,8 @@
+from abc import ABC
+
 from drf_spectacular.utils import extend_schema_field
 from rest_framework import serializers
-from .models import UserFollowing, ArtifactUser
+from .models import UserFollowing, ArtifactUser, SocialLink
 
 
 class UserBaseSerializer(serializers.ModelSerializer):
@@ -31,11 +33,18 @@ class UserBaseSerializer(serializers.ModelSerializer):
         return UserFollowing.objects.filter(following_user=obj).count()
 
 
+class SocialLinkSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SocialLink
+        fields = ('id', 'link',)
+
+
 class ProfileSerializer(serializers.ModelSerializer):
     """
     Profile detail serializer
     """
     avatar = serializers.ImageField(read_only=True)
+    social_links = SocialLinkSerializer(read_only=True, many=True)
     followers_count = serializers.SerializerMethodField()
     following_count = serializers.SerializerMethodField()
 
@@ -49,6 +58,7 @@ class ProfileSerializer(serializers.ModelSerializer):
             'followers_count',
             'following_count',
             'avatar',
+            'social_links',
         )
 
     @extend_schema_field(field=serializers.IntegerField())
@@ -65,6 +75,10 @@ class UserProfileImageSerializer(serializers.ModelSerializer):
     class Meta:
         model = ArtifactUser
         fields = ('avatar',)
+
+
+class FollowSerializer(serializers.Serializer):
+    is_followed = serializers.BooleanField()
 
 
 class UserFollowingSerializer(serializers.ModelSerializer):

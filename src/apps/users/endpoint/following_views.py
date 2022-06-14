@@ -2,7 +2,7 @@ import django.db
 from drf_spectacular.utils import extend_schema
 from rest_framework import views, generics, permissions, response
 from ..models import UserFollowing, ArtifactUser
-from ..serializers import UserFollowingSerializer, UserFollowersSerializer
+from ..serializers import UserFollowingSerializer, UserFollowersSerializer, FollowSerializer
 from ..services import PaginationUsers
 import base.permissions as art_permissions
 
@@ -63,7 +63,7 @@ class FollowView(views.APIView):
 
     @extend_schema(
         description='Check following',
-        responses=bool,
+        responses=FollowSerializer,
     )
     def get(self, request, pk):
         try:
@@ -74,12 +74,12 @@ class FollowView(views.APIView):
         try:
             UserFollowing.objects.get(user=request.user, following_user=pk)
         except UserFollowing.DoesNotExist:
-            return response.Response(False)
-        return response.Response(True)
+            return response.Response({'is_followed': False})
+        return response.Response({'is_followed': True})
 
     @extend_schema(
         description='Follow',
-        responses=bool,
+        responses=FollowSerializer,
     )
     def post(self, request, pk):
         try:
@@ -88,13 +88,13 @@ class FollowView(views.APIView):
         except ArtifactUser.DoesNotExist:
             return response.Response({'error': 'User does not exist'}, status=404)
         except django.db.IntegrityError:
-            return response.Response(True, status=200)
+            return response.Response({'is_followed': True}, status=200)
 
-        return response.Response(True, status=201)
+        return response.Response({'is_followed': True}, status=201)
 
     @extend_schema(
         description='Unfollow',
-        responses={204: bool}
+        responses={204: FollowSerializer}
     )
     def delete(self, request, pk):
         try:
@@ -105,4 +105,4 @@ class FollowView(views.APIView):
         except UserFollowing.DoesNotExist:
             return response.Response(status=404)
         follow.delete()
-        return response.Response(False, status=204)
+        return response.Response({'is_followed': False}, status=204)

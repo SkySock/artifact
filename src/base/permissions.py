@@ -1,6 +1,6 @@
 from rest_framework.permissions import BasePermission, SAFE_METHODS
 
-from apps.users.models import ArtifactUser
+from apps.users.models import ArtifactUser, SocialLink
 
 
 class IsOptions(BasePermission):
@@ -17,3 +17,11 @@ class IsProfileOwner(BasePermission):
     """
     def has_object_permission(self, request, view, obj: ArtifactUser):
         return obj == request.user
+
+
+class IsSocialLinkOwner(BasePermission):
+    """
+    The request of current a user, or is a read-only request
+    """
+    def has_object_permission(self, request, view, obj: SocialLink):
+        return obj.user == request.user
