@@ -19,7 +19,7 @@ class UserBaseSerializer(serializers.ModelSerializer):
         fields = ('id', 'username', 'display_name', 'followers_count', 'avatar', 'is_followed')
 
     @extend_schema_field(field=serializers.BooleanField())
-    def get_is_followed(self, obj):
+    def get_is_followed(self, obj: ArtifactUser):
         request = self.context.get('request')
         if not request:
             return None
@@ -32,7 +32,7 @@ class UserBaseSerializer(serializers.ModelSerializer):
         return True
 
     @extend_schema_field(field=serializers.IntegerField())
-    def get_followers_count(self, obj):
+    def get_followers_count(self, obj: ArtifactUser):
         return UserFollowing.objects.filter(following_user=obj).count()
 
 

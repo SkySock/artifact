@@ -1,8 +1,11 @@
 import hashlib
 import hmac
+import io
 from django.conf import settings
+from django.core.files.images import ImageFile
 from rest_framework.exceptions import AuthenticationFailed
 
+from base.services import download_img
 from .. import serializers
 from . import base_auth
 from apps.users.models import ArtifactUser
@@ -24,13 +27,20 @@ def check_telegram_auth(telegram_user: serializers.TelegramAuthSerializer):
     processed_hash = hmac.new(secret_key, msg=msg, digestmod=hashlib.sha256).hexdigest()
 
     if processed_hash == telegram_user.data['hash']:
-        user, _ = ArtifactUser.objects.get_or_create(
+        user, created = ArtifactUser.objects.get_or_create(
             telegram_id=telegram_user.data['id'],
             defaults={
                 'display_name': f'{telegram_user.data.get("first_name", "")} {telegram_user.data.get("last_name", "")}',
                 'username': generate_unique_username(telegram_user.data["username"]),
             },
         )
+        url = telegram_user.data.get("photo_url", "")
+        if url and created:
+            img_b = download_img(url)
+            image = ImageFile(io.BytesIO(img_b), name=url.split('/')[-1])
+            user.avatar = image
+            user.save()
+
         return base_auth.create_token(user.pk)
     else:
         raise AuthenticationFailed(code=403, detail='Bad data telegram')
