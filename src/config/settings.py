@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'apps.users',
     'apps.artifact_auth',
     'apps.posts',
+    'apps.subscription',
 ]
 
 MIDDLEWARE = [
