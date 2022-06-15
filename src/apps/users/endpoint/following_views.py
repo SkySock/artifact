@@ -2,7 +2,7 @@ import django.db
 from drf_spectacular.utils import extend_schema
 from rest_framework import views, generics, permissions, response
 from ..models import UserFollowing, ArtifactUser
-from ..serializers import UserFollowingSerializer, UserFollowersSerializer, FollowSerializer
+from ..serializers import UserFollowingSerializer, UserFollowersSerializer, FollowSerializer, UserBaseSerializer
 from ..services import PaginationUsers
 import base.permissions as art_permissions
 
@@ -12,11 +12,15 @@ class UserFollowingViewSet(generics.ListAPIView):
     List of subscriptions of an authorized user
     """
     permission_classes = (permissions.IsAuthenticated | art_permissions.IsOptions,)
-    serializer_class = UserFollowingSerializer
+    serializer_class = UserBaseSerializer
     pagination_class = PaginationUsers
 
     def get_queryset(self):
-        return UserFollowing.objects.filter(user=self.request.user)
+        return [
+            user.following_user for user in UserFollowing.objects.filter(
+                user=self.request.user
+            )
+        ]
 
 
 class UserFollowersViewSet(generics.ListAPIView):
@@ -24,11 +28,15 @@ class UserFollowersViewSet(generics.ListAPIView):
     List of subscribers of an authorized user
     """
     permission_classes = (permissions.IsAuthenticated | art_permissions.IsOptions,)
-    serializer_class = UserFollowersSerializer
+    serializer_class = UserBaseSerializer
     pagination_class = PaginationUsers
 
     def get_queryset(self):
-        return UserFollowing.objects.filter(following_user=self.request.user)
+        return [
+            user.user for user in UserFollowing.objects.filter(
+                following_user=self.request.user
+            )
+        ]
 
 
 class FollowingUsersByIdViewSet(generics.ListAPIView):
@@ -36,11 +44,11 @@ class FollowingUsersByIdViewSet(generics.ListAPIView):
     List of subscriptions by id
     """
     permission_classes = (permissions.IsAuthenticated | art_permissions.IsOptions,)
-    serializer_class = UserFollowingSerializer
+    serializer_class = UserBaseSerializer
     pagination_class = PaginationUsers
 
     def get_queryset(self):
-        return UserFollowing.objects.filter(user=self.kwargs.get(self.lookup_field))
+        return [user.following_user for user in UserFollowing.objects.filter(user=self.kwargs.get(self.lookup_field))]
 
 
 class FollowersByIdViewSet(generics.ListAPIView):
@@ -48,11 +56,15 @@ class FollowersByIdViewSet(generics.ListAPIView):
     List of subscribers by id
     """
     permission_classes = (permissions.IsAuthenticated | art_permissions.IsOptions,)
-    serializer_class = UserFollowersSerializer
+    serializer_class = UserBaseSerializer
     pagination_class = PaginationUsers
 
     def get_queryset(self):
-        return UserFollowing.objects.filter(following_user=self.kwargs.get(self.lookup_field))
+        return [
+            user.user for user in UserFollowing.objects.filter(
+                following_user=self.kwargs.get(self.lookup_field)
+            )
+        ]
 
 
 class FollowView(views.APIView):
