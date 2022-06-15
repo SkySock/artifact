@@ -1,5 +1,5 @@
 from rest_framework import generics, viewsets
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
 
 from ..models import ArtifactUser
 from ..serializers import UserBaseSerializer, ProfileSerializer, UserProfileImageSerializer, SocialLinkSerializer
@@ -11,7 +11,7 @@ class UserListView(generics.ListAPIView):
     """
     A list of users
     """
-    permission_classes = (IsAuthenticated | IsOptions,)
+    permission_classes = (AllowAny,)
     serializer_class = UserBaseSerializer
     pagination_class = PaginationUsers
     queryset = ArtifactUser.objects.all()

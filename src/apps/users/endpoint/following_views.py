@@ -16,11 +16,7 @@ class UserFollowingViewSet(generics.ListAPIView):
     pagination_class = PaginationUsers
 
     def get_queryset(self):
-        return [
-            user.following_user for user in UserFollowing.objects.filter(
-                user=self.request.user
-            )
-        ]
+        return ArtifactUser.objects.filter(followers__user=self.request.user)
 
 
 class UserFollowersViewSet(generics.ListAPIView):
@@ -32,11 +28,7 @@ class UserFollowersViewSet(generics.ListAPIView):
     pagination_class = PaginationUsers
 
     def get_queryset(self):
-        return [
-            user.user for user in UserFollowing.objects.filter(
-                following_user=self.request.user
-            )
-        ]
+        return ArtifactUser.objects.filter(following__following_user=self.request.user)
 
 
 class FollowingUsersByIdViewSet(generics.ListAPIView):
@@ -48,7 +40,7 @@ class FollowingUsersByIdViewSet(generics.ListAPIView):
     pagination_class = PaginationUsers
 
     def get_queryset(self):
-        return [user.following_user for user in UserFollowing.objects.filter(user=self.kwargs.get(self.lookup_field))]
+        return ArtifactUser.objects.filter(followers__user=self.kwargs.get(self.lookup_field))
 
 
 class FollowersByIdViewSet(generics.ListAPIView):
@@ -60,11 +52,7 @@ class FollowersByIdViewSet(generics.ListAPIView):
     pagination_class = PaginationUsers
 
     def get_queryset(self):
-        return [
-            user.user for user in UserFollowing.objects.filter(
-                following_user=self.kwargs.get(self.lookup_field)
-            )
-        ]
+        return ArtifactUser.objects.filter(following__following_user=self.kwargs.get(self.lookup_field))
 
 
 class FollowView(views.APIView):
