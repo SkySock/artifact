@@ -11,3 +11,7 @@ def generate_unique_username(username: str = None):
         return username
     else:
         return username + uuid.uuid4().hex.upper()
+
+
+def get_user_class():
+    return ArtifactUser

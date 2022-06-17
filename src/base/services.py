@@ -6,6 +6,10 @@ def get_path_upload_profile_image(instance, file):
     return f'avatars/{instance.id}/{file}'
 
 
+def get_path_upload_subscription_image(instance, file):
+    return f'subscriptions/user_{instance.owner.id}/{instance.id}.{file.split(".")[-1]}'
+
+
 def get_default_profile_image():
     return 'avatars/defaults/default_profile_image.png'
 

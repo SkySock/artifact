@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'rest_framework',
+    'djmoney',
     'drf_spectacular',
     'corsheaders',
 
@@ -173,3 +174,5 @@ JWT = {
 
 CORS_ALLOWED_ORIGINS = list(os.environ.get("CORS_ALLOWED_ORIGINS", "127.0.0.1").split())
 CORS_ALLOW_CREDENTIALS = True
+
+CURRENCIES = ('RUB',)
