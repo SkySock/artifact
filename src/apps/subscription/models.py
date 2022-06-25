@@ -1,5 +1,6 @@
 from django.core.validators import FileExtensionValidator
 from django.db import models
+from django.db.models import Q
 from djmoney.models.fields import MoneyField
 from djmoney.models.validators import MinMoneyValidator, MaxMoneyValidator
 
@@ -8,7 +9,7 @@ from base.utils import get_user_class
 
 
 class UserSubscription(models.Model):
-    owner = models.ForeignKey(get_user_class(), on_delete=models.CASCADE, related_name='subscriptions')
+    owner = models.ForeignKey(get_user_class(), on_delete=models.CASCADE, related_name='subscription_settings')
     name = models.CharField(max_length=40)
     description = models.TextField(max_length=2000)
     image = models.ImageField(
@@ -26,3 +27,25 @@ class UserSubscription(models.Model):
         ],
         default_currency='RUB'
     )
+
+    class Meta:
+        ordering = ('owner', 'price',)
+
+    def __str__(self):
+        return f"{self.name}(id: {str(self.pk)})"
+
+
+class SponsorshipSubscription(models.Model):
+    user = models.ForeignKey(get_user_class(), on_delete=models.CASCADE, related_name='subscriptions')
+    subscription = models.ForeignKey(UserSubscription, on_delete=models.CASCADE, related_name='subscribers')
+    created = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=['user', 'subscription'], name='unique_subscription'),
+        ]
+
+        ordering = ['-created']
+
+    def __str__(self):
+        return f"{self.user} is subscribed to {self.subscription}"

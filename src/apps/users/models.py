@@ -1,5 +1,6 @@
 from django.core.validators import FileExtensionValidator
 from django.db import models
+from django.db.models import Q
 from django.utils.translation import gettext_lazy as _
 from django.contrib.auth.base_user import AbstractBaseUser, BaseUserManager
 from django.contrib.auth.models import AbstractUser, PermissionsMixin
@@ -69,7 +70,7 @@ class UserFollowing(models.Model):
 
     class Meta:
         constraints = [
-            models.UniqueConstraint(fields=['user', 'following_user'],  name='unique_followers',),
+            models.UniqueConstraint(fields=['user', 'following_user'], name='unique_followers',),
         ]
 
         ordering = ['-created']
