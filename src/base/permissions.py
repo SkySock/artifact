@@ -1,6 +1,6 @@
 from rest_framework.permissions import BasePermission, SAFE_METHODS
 
-from apps.subscription.models import UserSubscription
+from apps.subscription.models import UserSubscriptionType
 from apps.users.models import ArtifactUser, SocialLink
 
 
@@ -38,5 +38,5 @@ class IsSubscriptionOwner(BasePermission):
             return True
         return request.user and request.user.is_authenticated
 
-    def has_object_permission(self, request, view, obj: UserSubscription):
+    def has_object_permission(self, request, view, obj: UserSubscriptionType):
         return obj.owner == request.user

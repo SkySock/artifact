@@ -8,8 +8,8 @@ from base.services import validate_size_image, get_path_upload_subscription_imag
 from base.utils import get_user_class
 
 
-class UserSubscription(models.Model):
-    owner = models.ForeignKey(get_user_class(), on_delete=models.CASCADE, related_name='subscription_settings')
+class UserSubscriptionType(models.Model):
+    owner = models.ForeignKey(get_user_class(), on_delete=models.CASCADE, related_name='subscription_types')
     name = models.CharField(max_length=40)
     description = models.TextField(max_length=2000)
     image = models.ImageField(
@@ -37,7 +37,7 @@ class UserSubscription(models.Model):
 
 class SponsorshipSubscription(models.Model):
     user = models.ForeignKey(get_user_class(), on_delete=models.CASCADE, related_name='subscriptions')
-    subscription = models.ForeignKey(UserSubscription, on_delete=models.CASCADE, related_name='subscribers')
+    subscription = models.ForeignKey(UserSubscriptionType, on_delete=models.CASCADE, related_name='subscribers')
     created = models.DateTimeField(auto_now_add=True)
 
     class Meta:

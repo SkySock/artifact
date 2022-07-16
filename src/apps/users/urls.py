@@ -14,6 +14,8 @@ urlpatterns = [
     path("following/<int:pk>/", following_views.FollowingUsersByIdViewSet.as_view()),
     path("followers/<int:pk>/", following_views.FollowersByIdViewSet.as_view()),
 
+    path("<int:pk>/subscription-types/", views.SubscriptionsListView.as_view()),
+
     path("social_links/", views.SocialLinkView.as_view({'get': 'list', 'post': 'create', })),
     path("social_links/<int:pk>", views.SocialLinkView.as_view({'put': 'update', 'delete': 'destroy', })),
 ]

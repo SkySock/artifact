@@ -5,6 +5,7 @@ from ..models import ArtifactUser
 from ..serializers import UserBaseSerializer, ProfileSerializer, UserProfileImageSerializer, SocialLinkSerializer
 from base.permissions import IsOptions, IsProfileOwner, IsSocialLinkOwner
 from ..services import PaginationUsers
+from ...subscription.serializers import UserSubscriptionDetailSerializer
 
 
 class UserListView(generics.ListAPIView):
@@ -47,3 +48,14 @@ class SocialLinkView(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
+
+
+class SubscriptionsListView(generics.ListAPIView):
+    """
+    A list of subscriptions
+    """
+    permission_classes = (AllowAny,)
+    serializer_class = UserSubscriptionDetailSerializer
+
+    def get_queryset(self):
+        return ArtifactUser.objects.get(pk=self.kwargs.get(self.lookup_field)).subscription_types.all()

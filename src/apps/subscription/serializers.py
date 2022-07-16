@@ -2,7 +2,7 @@ from django.contrib.auth.models import AnonymousUser
 from drf_spectacular.utils import extend_schema_field, extend_schema_serializer, OpenApiExample
 from rest_framework import serializers
 
-from apps.subscription.models import UserSubscription, SponsorshipSubscription
+from apps.subscription.models import UserSubscriptionType, SponsorshipSubscription
 from apps.users.models import ArtifactUser
 
 
@@ -25,12 +25,12 @@ class UserSubscriptionDetailSerializer(serializers.ModelSerializer):
     is_subscribed = serializers.SerializerMethodField()
 
     class Meta:
-        model = UserSubscription
+        model = UserSubscriptionType
         fields = ('id', 'owner', 'name', 'description', 'image', 'price', 'price_currency', 'is_subscribed')
         read_only_fields = ("owner",)
 
     @extend_schema_field(field=serializers.BooleanField())
-    def get_is_subscribed(self, obj: UserSubscription):
+    def get_is_subscribed(self, obj: UserSubscriptionType):
         request = self.context.get('request')
         if not request:
             return None
