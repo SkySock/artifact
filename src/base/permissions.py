@@ -32,7 +32,7 @@ class IsSocialLinkOwner(BasePermission):
         return obj.user == request.user
 
 
-class IsSubscriptionOwner(BasePermission):
+class IsSubscriptionTypeOwner(BasePermission):
     def has_permission(self, request, view):
         if request.method in SAFE_METHODS:
             return True

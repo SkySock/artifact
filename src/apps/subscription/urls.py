@@ -3,12 +3,13 @@ from . import views
 
 
 urlpatterns = [
-    path("", views.SubscriptionView.as_view({
+    path("", views.SubscriptionTypeCRUDView.as_view({
         'post': 'create',
     })),
-    path("<int:pk>/", views.SubscriptionView.as_view({
+    path("<int:pk>/", views.SubscriptionTypeCRUDView.as_view({
         'get': 'retrieve',
         'patch': 'update',
         'delete': 'destroy',
     })),
+    path("<int:pk>/subscribe", views.SubscriptionView.as_view()),
 ]

@@ -41,3 +41,7 @@ class UserSubscriptionDetailSerializer(serializers.ModelSerializer):
         except SponsorshipSubscription.DoesNotExist:
             return False
         return True
+
+
+class SubscriptionSerializer(serializers.Serializer):
+    is_subscribed = serializers.BooleanField()

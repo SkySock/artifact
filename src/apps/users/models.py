@@ -32,7 +32,7 @@ class ArtifactUser(models.Model):
         upload_to=get_path_upload_profile_image,
         blank=True,
         default=get_default_profile_image,
-        validators=[FileExtensionValidator(allowed_extensions=['jpg', 'png', ]), validate_size_image]
+        validators=[FileExtensionValidator(allowed_extensions=['jpg', 'png', 'jpeg',]), validate_size_image]
     )
     date_joined = models.DateTimeField(verbose_name='date joined', auto_now_add=True)
 

@@ -16,7 +16,7 @@ class UserSubscriptionType(models.Model):
         max_length=255,
         upload_to=get_path_upload_subscription_image,
         blank=True,
-        validators=[FileExtensionValidator(allowed_extensions=['jpg', 'png', ]), validate_size_image]
+        validators=[FileExtensionValidator(allowed_extensions=['jpg', 'png', 'jpeg', ]), validate_size_image]
     )
     price = MoneyField(
         max_digits=8,
