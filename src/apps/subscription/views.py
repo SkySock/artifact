@@ -1,7 +1,6 @@
 from drf_spectacular.utils import extend_schema
 from rest_framework import generics, mixins, response
 from rest_framework.generics import GenericAPIView
-from rest_framework.parsers import FileUploadParser
 from rest_framework.permissions import AllowAny, IsAuthenticatedOrReadOnly, IsAuthenticated
 
 from apps.subscription.models import UserSubscriptionType, SponsorshipSubscription

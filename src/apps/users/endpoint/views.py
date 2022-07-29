@@ -2,7 +2,8 @@ from rest_framework import generics, viewsets
 from rest_framework.permissions import IsAuthenticated, AllowAny
 
 from ..models import ArtifactUser
-from ..serializers import UserBaseSerializer, ProfileSerializer, UserProfileImageSerializer, SocialLinkSerializer
+from ..serializers import UserBaseSerializer, ProfileSerializer, UserProfileImageSerializer, SocialLinkSerializer, \
+    ProfileSettingsSerializer
 from base.permissions import IsOptions, IsProfileOwner, IsSocialLinkOwner
 from ..services import PaginationUsers
 from ...subscription.serializers import UserSubscriptionDetailSerializer
@@ -24,6 +25,19 @@ class ProfileView(generics.RetrieveAPIView):
     """
     serializer_class = ProfileSerializer
     queryset = ArtifactUser.objects.all().prefetch_related('social_links')
+
+
+class UpdateProfileSettings(generics.UpdateAPIView):
+    """
+        Update profile settings
+    """
+    permission_classes = (IsProfileOwner,)
+    serializer_class = ProfileSettingsSerializer
+
+    def get_object(self):
+        obj = self.request.user
+        self.check_object_permissions(self.request, obj)
+        return obj
 
 
 class UpdateUserPhotoView(generics.UpdateAPIView):

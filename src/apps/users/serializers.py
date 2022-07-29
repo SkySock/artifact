@@ -42,6 +42,12 @@ class SocialLinkSerializer(serializers.ModelSerializer):
         fields = ('id', 'link',)
 
 
+class ProfileSettingsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ArtifactUser
+        fields = ('id', 'username', 'display_name', 'bio', )
+
+
 class ProfileSerializer(serializers.ModelSerializer):
     """
     Profile detail serializer
