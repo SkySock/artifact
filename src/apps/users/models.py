@@ -6,6 +6,7 @@ from django.contrib.auth.base_user import AbstractBaseUser, BaseUserManager
 from django.contrib.auth.models import AbstractUser, PermissionsMixin
 
 from base.services import get_path_upload_profile_image, get_default_profile_image, validate_size_image
+from base.validators import FileSizeValidator
 from .validators import ArtUnicodeUsernameValidator
 
 
@@ -31,8 +32,11 @@ class ArtifactUser(models.Model):
         max_length=255,
         upload_to=get_path_upload_profile_image,
         blank=True,
-        default=get_default_profile_image,
-        validators=[FileExtensionValidator(allowed_extensions=['jpg', 'png', 'jpeg', ]), validate_size_image]
+        default='posts/defaults/default_profile_image.png',
+        validators=[
+            FileExtensionValidator(allowed_extensions=['jpg', 'png', 'jpeg', ]),
+            FileSizeValidator(megabyte_limit=5)
+        ]
     )
     date_joined = models.DateTimeField(verbose_name='date joined', auto_now_add=True)
 
