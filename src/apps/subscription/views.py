@@ -1,3 +1,4 @@
+from django.db import transaction
 from drf_spectacular.utils import extend_schema
 from rest_framework import generics, mixins, response
 from rest_framework.generics import GenericAPIView
@@ -53,6 +54,7 @@ class SubscriptionView(GenericAPIView):
             404: MessageSerializer
         },
     )
+    @transaction.atomic
     def post(self, request, *args, **kwargs):
         success, msg = subscribe(request.user, self.kwargs.get(self.lookup_field))
         if success:

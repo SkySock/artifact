@@ -1,14 +1,14 @@
 from django.contrib import admin
-from apps.posts.models import post, comment
+from apps.posts.models import post, comment, view, like
 
 
 @admin.register(post.Post)
-class UserFollowingAdmin(admin.ModelAdmin):
+class PostAdmin(admin.ModelAdmin):
     list_display = ('id', 'author',)
     list_display_links = ('author',)
 
 
 @admin.register(comment.Comment)
-class UserFollowingAdmin(admin.ModelAdmin):
+class CommentAdmin(admin.ModelAdmin):
     list_display = ('id', 'post',)
     list_display_links = ('post',)
