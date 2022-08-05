@@ -6,6 +6,7 @@ from djmoney.models.validators import MinMoneyValidator, MaxMoneyValidator
 
 from base.services import validate_size_image, get_path_upload_subscription_image
 from base.utils import get_user_class
+from base.validators import FileSizeValidator
 
 
 class UserSubscriptionType(models.Model):
@@ -16,7 +17,10 @@ class UserSubscriptionType(models.Model):
         max_length=255,
         upload_to=get_path_upload_subscription_image,
         blank=True,
-        validators=[FileExtensionValidator(allowed_extensions=['jpg', 'png', 'jpeg', ]), validate_size_image]
+        validators=[
+            FileExtensionValidator(allowed_extensions=['jpg', 'png', 'jpeg', ]),
+            FileSizeValidator(megabyte_limit=8)
+        ]
     )
     price = MoneyField(
         max_digits=8,

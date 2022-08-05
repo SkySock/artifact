@@ -1,6 +1,5 @@
 from django.urls import path
-from .endpoint import auth_views, views, following_views
-
+from .endpoint import auth_views, views, following_views, posts_views
 
 urlpatterns = [
     path("", views.UserListView.as_view()),
@@ -17,6 +16,7 @@ urlpatterns = [
     path("followers/<int:pk>/", following_views.FollowersByIdViewSet.as_view()),
 
     path("<int:pk>/subscription-types/", views.SubscriptionsListView.as_view()),
+    path("<int:pk>/posts/", posts_views.PostsListPreviews.as_view()),
 
     path("social-links/", views.SocialLinkView.as_view({'get': 'list', 'post': 'create', })),
     path("social-links/<int:pk>", views.SocialLinkView.as_view({'put': 'update', 'delete': 'destroy', })),

@@ -1,15 +1,14 @@
 from django.core.validators import FileExtensionValidator
 from django.db import models
 
-from apps.posts.validators import validate_size_file
-from base.services import get_path_upload_post_file
+from base.services import get_path_upload_post_file, get_path_upload_post_preview
 from base.validators import FileSizeValidator
 
 
 class Post(models.Model):
     author = models.ForeignKey('users.ArtifactUser', on_delete=models.CASCADE, related_name="posts")
-    preview_image = models.ImageField(
-        upload_to=get_path_upload_post_file,
+    preview = models.ImageField(
+        upload_to=get_path_upload_post_preview,
         validators=[
             FileExtensionValidator(allowed_extensions=['jpg', 'png', 'jpeg', ]),
             FileSizeValidator(megabyte_limit=32)

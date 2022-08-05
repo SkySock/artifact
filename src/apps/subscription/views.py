@@ -6,7 +6,7 @@ from rest_framework.permissions import AllowAny, IsAuthenticatedOrReadOnly, IsAu
 
 from apps.subscription.models import UserSubscriptionType, SponsorshipSubscription
 from apps.subscription.serializers import UserSubscriptionDetailSerializer, SubscriptionSerializer
-from apps.subscription.services.subs import subscribe, unsubscribe
+from apps.subscription.services.subs import subs_relations
 from base.classes import CreateRetrieveUpdateDestroy
 from base.permissions import IsSubscriptionTypeOwner
 from base.serializers import MessageSerializer
@@ -56,7 +56,7 @@ class SubscriptionView(GenericAPIView):
     )
     @transaction.atomic
     def post(self, request, *args, **kwargs):
-        success, msg = subscribe(request.user, self.kwargs.get(self.lookup_field))
+        success, msg = subs_relations.subscribe(request.user, self.kwargs.get(self.lookup_field))
         if success:
             return response.Response({'message': msg}, status=201)
         return response.Response({'message': msg}, status=404)
@@ -69,7 +69,7 @@ class SubscriptionView(GenericAPIView):
         },
     )
     def delete(self, request, *args, **kwargs):
-        success, msg = unsubscribe(request.user, self.kwargs.get(self.lookup_field))
+        success, msg = subs_relations.unsubscribe(request.user, self.kwargs.get(self.lookup_field))
         if success:
             return response.Response({'message': msg}, status=201)
         return response.Response({'message': msg}, status=404)

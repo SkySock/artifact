@@ -11,7 +11,11 @@ def get_path_upload_subscription_image(instance, file):
 
 
 def get_path_upload_post_file(instance, file):
-    return f'posts/user_{instance.post.owner.id}/post_{instance.post.id}/{file}'
+    return f'posts/user_{instance.post.author.id}/post_{instance.post.id}/{file}'
+
+
+def get_path_upload_post_preview(instance, file):
+    return f'posts/user_{instance.author.id}/post_{instance.id}/{file}'
 
 
 def get_default_profile_image():
