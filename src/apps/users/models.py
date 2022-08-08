@@ -43,6 +43,9 @@ class ArtifactUser(models.Model):
     EMAIL_FIELD = "email"
     USERNAME_FIELD = "username"
 
+    class Meta:
+        ordering = ('username', )
+
     @property
     def is_authenticated(self):
         return True

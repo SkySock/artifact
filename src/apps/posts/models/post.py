@@ -26,6 +26,9 @@ class Post(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     description = models.TextField(max_length=2000, blank=True)
 
+    class Meta:
+        ordering = ('-created', )
+
     def __str__(self):
         return f'Post (id: {str(self.pk)})'
 

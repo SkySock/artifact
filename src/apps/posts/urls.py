@@ -3,5 +3,5 @@ from . import views
 
 
 urlpatterns = [
-    # path("<pk:int>/", ),
+    path("", views.CreatePostView.as_view()),
 ]

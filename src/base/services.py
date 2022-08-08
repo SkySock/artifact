@@ -15,7 +15,7 @@ def get_path_upload_post_file(instance, file):
 
 
 def get_path_upload_post_preview(instance, file):
-    return f'posts/user_{instance.author.id}/post_{instance.id}/{file}'
+    return f'posts/user_{instance.author.id}/previews/{file}'
 
 
 def get_default_profile_image():
