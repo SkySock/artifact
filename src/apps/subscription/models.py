@@ -33,6 +33,9 @@ class UserSubscriptionType(models.Model):
     )
 
     class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=['owner', 'price'], name='unique_subscription_price'),
+        ]
         ordering = ('owner', 'price',)
 
     def __str__(self):

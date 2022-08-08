@@ -29,6 +29,20 @@ class UserSubscriptionDetailSerializer(serializers.ModelSerializer):
         fields = ('id', 'owner', 'name', 'description', 'image', 'price', 'price_currency', 'is_subscribed')
         read_only_fields = ("owner",)
 
+    def is_valid(self, raise_exception=True):
+        request = self.context.get('request')
+        is_valid = super().is_valid(raise_exception)
+        if not request:
+            return is_valid
+        if type(request.user) == AnonymousUser:
+            return is_valid
+
+        data = self.initial_data
+        if UserSubscriptionType.objects.filter(owner=request.user, price=data.get('price')).exists():
+            raise serializers.ValidationError("Subscription price should be unique")
+
+        return is_valid
+
     @extend_schema_field(field=serializers.BooleanField())
     def get_is_subscribed(self, obj: UserSubscriptionType):
         request = self.context.get('request')
