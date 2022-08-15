@@ -8,7 +8,7 @@ urlpatterns = [
     })),
     path("<int:pk>/", views.SubscriptionTypeCRUDView.as_view({
         'get': 'retrieve',
-        'patch': 'update',
+        'patch': 'partial_update',
         'delete': 'destroy',
     })),
     path("<int:pk>/subscribe", views.SubscriptionView.as_view()),

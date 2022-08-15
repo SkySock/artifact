@@ -1,5 +1,6 @@
 from rest_framework.permissions import BasePermission, SAFE_METHODS
 
+from apps.posts.models.post import Post
 from apps.subscription.models import UserSubscriptionType
 from apps.users.models import ArtifactUser, SocialLink
 
@@ -10,6 +11,11 @@ class IsOptions(BasePermission):
     """
     def has_permission(self, request, view):
         return request.method == 'OPTIONS'
+
+
+class IsPostAuthor(BasePermission):
+    def has_object_permission(self, request, view, obj: Post):
+        return obj.author == request.user
 
 
 class IsProfileOwner(BasePermission):

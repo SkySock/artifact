@@ -18,7 +18,7 @@ class SubscriptionTypeCRUDView(CreateRetrieveUpdateDestroy):
     """
     permission_classes = (IsAuthenticatedOrReadOnly,)
     permission_classes_by_action = {
-        'update': [IsSubscriptionTypeOwner, ],
+        'partial_update': [IsSubscriptionTypeOwner, ],
         'destroy': [IsSubscriptionTypeOwner, ],
     }
     serializer_class = UserSubscriptionDetailSerializer

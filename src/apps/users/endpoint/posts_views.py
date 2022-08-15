@@ -13,4 +13,7 @@ class PostsListPreviews(generics.ListAPIView):
     serializer_class = PreviewPostSerializer
 
     def get_queryset(self):
-        return Post.objects.select_related('author').filter(author=self.kwargs.get(self.lookup_field))
+        return Post.objects.select_related('author').filter(
+            author=self.kwargs.get(self.lookup_field),
+            is_published=True
+        )
