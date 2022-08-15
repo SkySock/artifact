@@ -60,6 +60,9 @@ class PostSerializer(serializers.ModelSerializer):
         read_only_fields = ['views_count', 'likes_count', 'author', 'is_published', 'publication_at', ]
 
     def validate_level_subscription(self, value):
+        """
+        Check that the request user is the owner of the subscription type.
+        """
         request = self.context.get('request')
         if not request:
             return value
@@ -68,6 +71,6 @@ class PostSerializer(serializers.ModelSerializer):
         if type(user) == ArtifactUser:
             user_subs_types = user.subscription_types.all()
             if value not in user_subs_types:
-                raise exceptions.ValidationError('sss')
+                raise exceptions.ValidationError('The subscription type does not belong to the user.')
 
         return value
