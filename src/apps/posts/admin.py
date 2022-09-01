@@ -1,5 +1,5 @@
 from django.contrib import admin
-from apps.posts.models import post, comment, view, like
+from src.apps.posts.models import post, comment, view, like
 
 
 @admin.register(post.Post)

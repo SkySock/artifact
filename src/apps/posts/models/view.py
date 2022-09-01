@@ -1,5 +1,5 @@
 from django.db import models
-from .post import Post
+from src.apps.posts.models.post import Post
 
 
 class PostView(models.Model):

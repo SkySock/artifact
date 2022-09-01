@@ -9,10 +9,10 @@ from rest_framework import status
 from rest_framework.test import APITestCase
 from unittest import mock
 
-from apps.artifact_auth.services.base_auth import create_token
-from apps.posts.models.post import Post
-from apps.subscription.models import UserSubscriptionType, SponsorshipSubscription
-from apps.users.models import ArtifactUser
+from src.apps.artifact_auth.services.base_auth import create_token
+from src.apps.posts.models.post import Post
+from src.apps.subscription.models import UserSubscriptionType, SponsorshipSubscription
+from src.apps.users.models import ArtifactUser
 
 
 class PostTests(APITestCase):
@@ -123,3 +123,41 @@ class PostTests(APITestCase):
         self.assertEqual(update_desc_response.status_code, status.HTTP_200_OK)
         self.assertEqual(update_desc_response.data['level_subscription'], self.sub2.id)
         self.assertEqual(Post.objects.get(pk=post_id).level_subscription, self.sub2)
+
+    def test_success_add_file_in_post(self):
+        self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.user_test1_token)
+        response = self.client.post(reverse('create_post'))
+        post_id = response.data['id']
+
+        response = self.client.post(
+            reverse('add_file_post', kwargs={'pk': post_id}),
+            data={
+                'file': self.file_mock
+            }
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+        response = self.client.post(
+            reverse('add_file_post', kwargs={'pk': post_id}),
+            data={
+                'file': self.file_mock
+            }
+        )
+
+        self.assertEqual(Post.objects.get(pk=post_id).content.count(), 2)
+
+    def test_invalid_add_file_in_post(self):
+        self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.user_test1_token)
+        response = self.client.post(reverse('create_post'))
+        post_id = response.data['id']
+
+        self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.user_test2_token)
+        response = self.client.post(
+            reverse('add_file_post', kwargs={'pk': post_id}),
+            data={
+                'file': self.file_mock
+            }
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)

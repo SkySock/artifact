@@ -1,7 +1,7 @@
-from apps.posts.models.post import Post
-from apps.subscription.models import UserSubscriptionType
-from apps.subscription.services.subs import subs_relations
-from apps.users.models import ArtifactUser
+from src.apps.posts.models.post import Post
+from src.apps.subscription.models import UserSubscriptionType
+from src.apps.subscription.services.subs import subs_relations
+from src.apps.users.models import ArtifactUser
 
 
 class PostService:

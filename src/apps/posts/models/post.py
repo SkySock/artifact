@@ -1,8 +1,9 @@
 from django.core.validators import FileExtensionValidator
 from django.db import models
+from django.utils import timezone
 
-from base.services import get_path_upload_post_file
-from base.validators import FileSizeValidator
+from src.base.services import get_path_upload_post_file
+from src.base.validators import FileSizeValidator
 
 
 class Post(models.Model):
@@ -33,6 +34,12 @@ class Post(models.Model):
 
     def get_likes_count(self):
         return self.likes.count()
+
+    def publish(self) -> None:
+        if not self.is_published:
+            self.publication_at = timezone.now()
+            self.is_published = True
+            self.save()
 
 
 class MediaContent(models.Model):

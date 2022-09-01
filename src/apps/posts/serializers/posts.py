@@ -2,10 +2,10 @@ from django.contrib.auth.models import AnonymousUser
 from drf_spectacular.utils import extend_schema_field
 from rest_framework import serializers, exceptions
 
-from apps.posts.models.post import Post, MediaContent
-from apps.posts.services.posts import post_service
-from apps.users.models import ArtifactUser
-from apps.users.serializers import UserBaseSerializer
+from src.apps.posts.models.post import Post, MediaContent
+from src.apps.posts.services.posts import post_service
+from src.apps.users.models import ArtifactUser
+from src.apps.users.serializers import UserBaseSerializer
 
 
 class PreviewPostSerializer(serializers.ModelSerializer):
@@ -65,6 +65,9 @@ class PostSerializer(serializers.ModelSerializer):
         """
         request = self.context.get('request')
         if not request:
+            return value
+
+        if not value:
             return value
 
         user = request.user
