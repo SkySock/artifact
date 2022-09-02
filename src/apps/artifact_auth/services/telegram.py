@@ -5,11 +5,11 @@ from django.conf import settings
 from django.core.files.images import ImageFile
 from rest_framework.exceptions import AuthenticationFailed
 
-from base.services import download_img
+from src.base.services import download_img
 from .. import serializers
 from . import base_auth
-from apps.users.models import ArtifactUser
-from base.utils import generate_unique_username
+from src.apps.users.models import ArtifactUser
+from src.base.utils import generate_unique_username
 
 
 def check_telegram_auth(telegram_user: serializers.TelegramAuthSerializer):

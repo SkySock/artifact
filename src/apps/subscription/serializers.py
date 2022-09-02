@@ -2,8 +2,7 @@ from django.contrib.auth.models import AnonymousUser
 from drf_spectacular.utils import extend_schema_field, extend_schema_serializer, OpenApiExample
 from rest_framework import serializers
 
-from apps.subscription.models import UserSubscriptionType, SponsorshipSubscription
-from apps.users.models import ArtifactUser
+from src.apps.subscription.models import UserSubscriptionType, SponsorshipSubscription
 
 
 @extend_schema_serializer(

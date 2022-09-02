@@ -1,10 +1,10 @@
 import django.db
 from drf_spectacular.utils import extend_schema
 from rest_framework import views, generics, permissions, response
-from ..models import UserFollowing, ArtifactUser
+from src.apps.users.models import UserFollowing, ArtifactUser
 from ..serializers import UserFollowingSerializer, UserFollowersSerializer, FollowSerializer, UserBaseSerializer
 from ..services import PaginationUsers
-import base.permissions as art_permissions
+import src.base.permissions as art_permissions
 
 
 class UserFollowingViewSet(generics.ListAPIView):

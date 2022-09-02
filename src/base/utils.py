@@ -1,6 +1,6 @@
 import uuid
 
-from apps.users.models import ArtifactUser
+from src.apps.users.models import ArtifactUser
 
 
 def generate_unique_username(username: str = None):

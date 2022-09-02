@@ -1,5 +1,5 @@
 from django.urls import path
-from .endpoint import auth_views, views, following_views, posts_views
+from src.apps.users.endpoint import auth_views, views, following_views, posts_views
 
 urlpatterns = [
     path("", views.UserListView.as_view()),

@@ -44,10 +44,10 @@ INSTALLED_APPS = [
     'drf_spectacular',
     'corsheaders',
 
-    'apps.users',
-    'apps.artifact_auth',
-    'apps.posts',
-    'apps.subscription',
+    'src.apps.users.apps.UserConfig',
+    'src.apps.artifact_auth',
+    'src.apps.posts',
+    'src.apps.subscription',
 ]
 
 MIDDLEWARE = [
@@ -63,7 +63,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'config.urls'
+ROOT_URLCONF = 'src.config.urls'
 
 TEMPLATES = [
     {
@@ -176,3 +176,14 @@ CORS_ALLOWED_ORIGINS = list(os.environ.get("CORS_ALLOWED_ORIGINS", "127.0.0.1").
 CORS_ALLOW_CREDENTIALS = True
 
 CURRENCIES = ('RUB',)
+
+# rabbitmq related settings
+RABBIT_HOST = os.environ.get('RABBIT_HOST', 'broker')
+RABBIT_PORT = os.environ.get('RABBIT_PORT', '5672')
+
+CELERY_BROKER_URL = 'pyamqp://' + 'guest:guest' + '@' + RABBIT_HOST + ':' + RABBIT_PORT + '/'
+CELERY_BROKER_TRANSPORT_OPTIONS = {'visibility_timeout': 3600}
+CELERY_RESULT_BACKEND = 'db+sqlite:///results.db'
+CELERY_ACCEPT_CONTENT = ['application/json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'

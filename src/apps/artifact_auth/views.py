@@ -6,7 +6,7 @@ from rest_framework.generics import GenericAPIView, RetrieveAPIView
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 
-from base.permissions import IsOptions
+from src.base.permissions import IsOptions
 from .serializers import TelegramAuthSerializer, UserDetailSerializer, TelegramAuthResponseSerializer
 from .services.telegram import check_telegram_auth
 

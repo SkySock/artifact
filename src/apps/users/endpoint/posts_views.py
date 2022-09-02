@@ -1,8 +1,8 @@
 from rest_framework import generics
 from rest_framework.permissions import AllowAny
 
-from apps.posts.models.post import Post
-from apps.posts.serializers.posts import PreviewPostSerializer
+from src.apps.posts.models.post import Post
+from src.apps.posts.serializers.posts import PreviewPostSerializer
 
 
 class PostsListPreviews(generics.ListAPIView):

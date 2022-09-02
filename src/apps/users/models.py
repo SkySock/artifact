@@ -5,8 +5,8 @@ from django.utils.translation import gettext_lazy as _
 from django.contrib.auth.base_user import AbstractBaseUser, BaseUserManager
 from django.contrib.auth.models import AbstractUser, PermissionsMixin
 
-from base.services import get_path_upload_profile_image, get_default_profile_image, validate_size_image
-from base.validators import FileSizeValidator
+from src.base.services import get_path_upload_profile_image, get_default_profile_image, validate_size_image
+from src.base.validators import FileSizeValidator
 from .validators import ArtUnicodeUsernameValidator
 
 

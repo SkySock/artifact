@@ -1,3 +1,4 @@
+from src.apps.posts.tasks import publish
 from src.apps.posts.models.post import Post
 from src.apps.subscription.models import UserSubscriptionType
 from src.apps.subscription.services.subs import subs_relations
@@ -23,6 +24,15 @@ class PostService:
             return True
 
         return False
+
+    def publish(self, pk, publication_at=None):
+        if publication_at:
+            publish.apply_async(
+                (pk, ),
+                eta=publication_at
+            )
+        else:
+            publish(pk)
 
 
 post_service = PostService()

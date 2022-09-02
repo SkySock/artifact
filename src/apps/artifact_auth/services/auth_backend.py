@@ -2,7 +2,7 @@ import jwt
 from rest_framework import authentication, exceptions
 from django.conf import settings
 from datetime import datetime
-from apps.users.models import ArtifactUser
+from src.apps.users.models import ArtifactUser
 from typing import Optional
 
 

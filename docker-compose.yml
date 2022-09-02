@@ -11,6 +11,17 @@ services:
       - .env.dev
     depends_on:
       - db
+      - broker
+  celery:
+    build: ./
+    command: poetry run celery -A src.config worker -B --loglevel=INFO
+    volumes:
+      - .:/app
+    env_file:
+      - .env.dev
+    depends_on:
+      - db
+      - broker
   db:
     image: postgres:13-alpine
     volumes:
@@ -19,6 +30,12 @@ services:
       - .env.dev
     ports:
       - '5432:5432'
+  broker:
+    image: rabbitmq
+    ports:
+      - '5672:5672'
+    volumes:
+      - "./rabbitmq/:/etc/rabbitmq/"
 
 volumes:
   pg_data:

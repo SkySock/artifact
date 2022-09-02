@@ -1,10 +1,10 @@
 from rest_framework import generics, viewsets
 from rest_framework.permissions import IsAuthenticated, AllowAny
 
-from ..models import ArtifactUser
+from src.apps.users.models import ArtifactUser
 from ..serializers import UserBaseSerializer, ProfileSerializer, UserProfileImageSerializer, SocialLinkSerializer, \
     ProfileSettingsSerializer
-from base.permissions import IsOptions, IsProfileOwner, IsSocialLinkOwner
+from src.base.permissions import IsOptions, IsProfileOwner, IsSocialLinkOwner
 from ..services import PaginationUsers
 from ...subscription.serializers import UserSubscriptionDetailSerializer
 

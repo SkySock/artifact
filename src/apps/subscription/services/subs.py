@@ -1,8 +1,8 @@
 from django.db import IntegrityError
 from typing import Optional
 
-from apps.subscription.models import UserSubscriptionType, SponsorshipSubscription
-from apps.users.models import ArtifactUser
+from src.apps.subscription.models import UserSubscriptionType, SponsorshipSubscription
+from src.apps.users.models import ArtifactUser
 
 
 class SubscriptionRelationsService:

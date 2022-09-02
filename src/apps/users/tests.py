@@ -1,7 +1,7 @@
 from django.test import TestCase
 from rest_framework import status
 from rest_framework.test import APITestCase, force_authenticate
-from .models import ArtifactUser, UserFollowing
+from src.apps.users.models import ArtifactUser, UserFollowing
 
 
 class FollowTest(APITestCase):

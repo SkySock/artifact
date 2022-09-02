@@ -1,8 +1,8 @@
 from rest_framework.permissions import BasePermission, SAFE_METHODS
 
-from apps.posts.models.post import Post
-from apps.subscription.models import UserSubscriptionType
-from apps.users.models import ArtifactUser, SocialLink
+from src.apps.posts.models.post import Post
+from src.apps.subscription.models import UserSubscriptionType
+from src.apps.users.models import ArtifactUser, SocialLink
 
 
 class IsOptions(BasePermission):

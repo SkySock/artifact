@@ -3,7 +3,7 @@ from abc import ABC
 from django.contrib.auth.models import AnonymousUser
 from drf_spectacular.utils import extend_schema_field
 from rest_framework import serializers
-from .models import UserFollowing, ArtifactUser, SocialLink
+from src.apps.users.models import UserFollowing, ArtifactUser, SocialLink
 
 
 class UserBaseSerializer(serializers.ModelSerializer):
@@ -104,3 +104,7 @@ class UserFollowersSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserFollowing
         fields = ('id', 'user', 'created')
+
+
+class PublicationAtSerializer(serializers.Serializer):
+    publication_at = serializers.DateTimeField(required=False)

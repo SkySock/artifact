@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from apps.users.models import ArtifactUser
+from src.apps.users.models import ArtifactUser
 
 
 class TelegramAuthSerializer(serializers.Serializer):

@@ -4,12 +4,12 @@ from rest_framework import generics, mixins, response
 from rest_framework.generics import GenericAPIView
 from rest_framework.permissions import AllowAny, IsAuthenticatedOrReadOnly, IsAuthenticated
 
-from apps.subscription.models import UserSubscriptionType, SponsorshipSubscription
-from apps.subscription.serializers import UserSubscriptionDetailSerializer, SubscriptionSerializer
-from apps.subscription.services.subs import subs_relations
-from base.classes import CreateRetrieveUpdateDestroy
-from base.permissions import IsSubscriptionTypeOwner
-from base.serializers import MessageSerializer
+from src.apps.subscription.models import UserSubscriptionType, SponsorshipSubscription
+from src.apps.subscription.serializers import UserSubscriptionDetailSerializer, SubscriptionSerializer
+from src.apps.subscription.services.subs import subs_relations
+from src.base.classes import CreateRetrieveUpdateDestroy
+from src.base.permissions import IsSubscriptionTypeOwner
+from src.base.serializers import MessageSerializer
 
 
 class SubscriptionTypeCRUDView(CreateRetrieveUpdateDestroy):
