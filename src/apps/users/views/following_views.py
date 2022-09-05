@@ -63,6 +63,7 @@ class FollowView(views.APIView):
 
     @extend_schema(
         description='Check following',
+        request=None,
         responses=FollowSerializer,
     )
     def get(self, request, pk):
@@ -79,6 +80,7 @@ class FollowView(views.APIView):
 
     @extend_schema(
         description='Follow',
+        request=None,
         responses=FollowSerializer,
     )
     def post(self, request, pk):
@@ -94,6 +96,7 @@ class FollowView(views.APIView):
 
     @extend_schema(
         description='Unfollow',
+        request=None,
         responses={204: FollowSerializer}
     )
     def delete(self, request, pk):

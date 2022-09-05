@@ -41,6 +41,14 @@ class Post(models.Model):
             self.is_published = True
             self.save()
 
+    def add_like(self):
+        self.likes_count += 1
+        self.save()
+
+    def delete_like(self):
+        self.likes_count -= 1
+        self.save()
+
 
 class MediaContent(models.Model):
     post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='content')

@@ -35,7 +35,6 @@ class SubscriptionRelationsService:
         subscription.delete()
         return True, 'User unsubscribed'
 
-
     def get_subscription_on_user(self, subscriber: ArtifactUser, subscription_owner: ArtifactUser) -> Optional[SponsorshipSubscription]:
         try:
             sudscription = subscriber.subscriptions.get(subscription__owner=subscription_owner)

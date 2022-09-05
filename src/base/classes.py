@@ -12,6 +12,19 @@ class ActionPermissionMixin:
             return [permission() for permission in self.permission_classes]
 
 
+class ActionSerializerMixin:
+    """
+        Миксин serializers для action
+    """
+    serializer_class_by_action = None
+
+    def get_serializer_class(self):
+        try:
+            return self.serializer_class_by_action[self.action]
+        except KeyError:
+            return self.serializer_class
+
+
 class CreateRetrieveUpdateDestroy(mixins.CreateModelMixin,
                                   mixins.RetrieveModelMixin,
                                   mixins.UpdateModelMixin,

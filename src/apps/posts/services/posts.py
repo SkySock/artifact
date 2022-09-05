@@ -1,3 +1,5 @@
+from django.http import Http404
+
 from src.apps.posts.tasks import publish
 from src.apps.posts.models.post import Post
 from src.apps.subscription.models import UserSubscriptionType
@@ -15,7 +17,7 @@ class PostService:
 
         access_subscription: UserSubscriptionType = post.level_subscription
 
-        user_subscription = subs_relations.get_subscription_on_user(user, post.author)
+        user_subscription = subs_relations.get_subscription_on_user(user, post.author).subscription
 
         if not user_subscription:
             return False
@@ -27,6 +29,13 @@ class PostService:
 
     def publish(self, pk, publication_at=None):
         if publication_at:
+            try:
+                post = Post.objects.get(pk=pk)
+            except Post.DoesNotExist:
+                raise Http404
+            post.publication_at = publication_at
+            post.save()
+
             publish.apply_async(
                 (pk, ),
                 eta=publication_at

@@ -1,6 +1,6 @@
 from django.http import HttpResponseNotModified, Http404
 from drf_spectacular.utils import extend_schema
-from rest_framework import generics, status, serializers
+from rest_framework import generics, status, viewsets, serializers, mixins
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.views import APIView
@@ -8,27 +8,41 @@ from rest_framework.views import APIView
 from src.apps.users.serializers import PublicationAtSerializer
 from src.apps.posts.services.posts import post_service
 from src.apps.posts.models.post import Post
-from src.apps.posts.serializers.posts import PostSerializer, PostMediaContentSerializer
-from src.base.permissions import IsPostAuthor
+from src.apps.posts.serializers.posts import PostSerializer, PostMediaContentSerializer, CreatePostSerializer
+from src.base.classes import ActionPermissionMixin, ActionSerializerMixin
+from src.base.permissions import IsPostAuthor, IsAccessPost
 
 
 class CreatePostView(generics.CreateAPIView):
     permission_classes = (IsAuthenticated, )
-    serializer_class = PostSerializer
+    serializer_class = CreatePostSerializer
 
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
 
 
-class UpdatePostView(generics.UpdateAPIView):
+class RetrieveUpdateDestroyPostView(mixins.RetrieveModelMixin,
+                                    mixins.UpdateModelMixin,
+                                    mixins.DestroyModelMixin,
+                                    ActionPermissionMixin,
+                                    ActionSerializerMixin,
+                                    viewsets.GenericViewSet):
+
     permission_classes = (IsAuthenticated, IsPostAuthor, )
-    serializer_class = PostSerializer
-    queryset = Post.objects.all()
+    permission_classes_by_action = {
+        'retrieve': (IsAuthenticated, IsAccessPost, ),
+    }
+    serializer_class = CreatePostSerializer
+    serializer_class_by_action = {
+        'partial_update': CreatePostSerializer,
+        'retrieve': PostSerializer,
+    }
+    queryset = Post.objects.all().prefetch_related('content')
 
 
 @extend_schema(
         request=PostMediaContentSerializer,
-        responses={201: PostSerializer},
+        responses={201: CreatePostSerializer},
     )
 class AddFileInPost(generics.CreateAPIView):
     permission_classes = (IsAuthenticated, IsPostAuthor, )
@@ -52,7 +66,7 @@ class AddFileInPost(generics.CreateAPIView):
         self.perform_create(serializer)
         headers = self.get_success_headers(serializer.data)
 
-        serializer_post = PostSerializer(post)
+        serializer_post = CreatePostSerializer(post)
 
         return Response(serializer_post.data, status=status.HTTP_201_CREATED, headers=headers)
 
@@ -68,19 +82,19 @@ class AddFileInPost(generics.CreateAPIView):
 class ToPublishPostView(APIView):
     permission_classes = (IsAuthenticated, IsPostAuthor)
 
-    def post(self):
+    def post(self, request, pk):
         post = self.get_object()
 
         serializer = PublicationAtSerializer(data=self.request.data)
         serializer.is_valid(raise_exception=True)
 
         post_service.publish(post.pk, serializer.data.get('publication_at'))
-        headers = self.get_success_headers(serializer.data)
-        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     def get_object(self):
         try:
-            post = Post.objects.get(pk=self.kwargs.get('pk'))
+            post = Post.objects.get(pk=self.kwargs.get('pk')).prefetch_related('content')
         except Post.DoesNotExist:
             raise Http404
 

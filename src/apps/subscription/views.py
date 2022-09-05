@@ -33,6 +33,7 @@ class SubscriptionView(GenericAPIView):
 
     @extend_schema(
         description='Check subscribed',
+        request=None,
         responses=SubscriptionSerializer,
     )
     def get(self, request, *args, **kwargs):
@@ -49,6 +50,7 @@ class SubscriptionView(GenericAPIView):
 
     @extend_schema(
         description='Subscribe',
+        request=None,
         responses={
             201: MessageSerializer,
             404: MessageSerializer
@@ -63,6 +65,7 @@ class SubscriptionView(GenericAPIView):
 
     @extend_schema(
         description='Unsubscribe',
+        request=None,
         responses={
             201: MessageSerializer,
             404: MessageSerializer

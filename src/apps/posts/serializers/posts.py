@@ -46,7 +46,7 @@ class PreviewPostSerializer(serializers.ModelSerializer):
 class PostMediaContentSerializer(serializers.ModelSerializer):
     class Meta:
         model = MediaContent
-        fields = '__all__'
+        fields = ('file', 'queue_mark', )
         read_only_fields = ['post', ]
 
 
@@ -56,8 +56,27 @@ class PostSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Post
-        fields = '__all__'
-        read_only_fields = ['views_count', 'likes_count', 'author', 'is_published', 'publication_at', ]
+        fields = (
+            'id',
+            'description',
+            'content',
+            'level_subscription',
+            'author',
+            'publication_at',
+            'is_published',
+            'views_count',
+            'likes_count',
+        )
+        read_only_fields = ('views_count', 'likes_count', 'author', 'is_published', 'publication_at', )
+
+
+class CreatePostSerializer(serializers.ModelSerializer):
+    content = PostMediaContentSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = Post
+        fields = ('id', 'description', 'content', 'level_subscription', 'publication_at', )
+        read_only_fields = ('publication_at', )
 
     def validate_level_subscription(self, value):
         """
