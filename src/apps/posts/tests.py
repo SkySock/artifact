@@ -12,6 +12,7 @@ from unittest import mock
 from src.apps.artifact_auth.services.base_auth import create_token
 from src.apps.posts.models.like import Like
 from src.apps.posts.models.post import Post
+from src.apps.posts.models.view import PostView
 from src.apps.subscription.models import UserSubscriptionType, SponsorshipSubscription
 from src.apps.users.models import ArtifactUser
 
@@ -182,13 +183,16 @@ class PostTests(APITestCase):
         response = self.client.get(reverse('retrieve_update_destroy_post', kwargs={'pk': post2.pk}))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data['description'], 'AAA')
+        self.assertEqual(response.data['views_count'], 1)
 
         response = self.client.get(reverse('retrieve_update_destroy_post', kwargs={'pk': post1.pk}))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data['views_count'], 1)
 
         self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.user_test1_token)
         response = self.client.get(reverse('retrieve_update_destroy_post', kwargs={'pk': post2.pk}))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data['views_count'], 2)
 
     def test_invalid_retrieve_post(self):
         self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.user_test2_token)
@@ -220,12 +224,19 @@ class LikeTests(APITestCase):
         self.assertEqual(response.data['is_liked'], True)
         self.assertEqual(Post.objects.get(pk=self.post.pk).likes_count, 1)
 
+        self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.user_test1_token)
+        response = self.client.post(reverse('like_post', kwargs={'pk': self.post.pk}))
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(response.data['is_liked'], True)
+        self.assertEqual(Post.objects.get(pk=self.post.pk).likes_count, 2)
+
     def test_invalid_like(self):
         self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.user_test2_token)
         response = self.client.post(reverse('like_post', kwargs={'pk': 1000}))
 
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
         self.assertEqual(Like.objects.all().count(), 0)
+        self.assertEqual(Post.objects.get(pk=self.post.pk).likes_count, 0)
 
     def test_check_like(self):
         self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.user_test2_token)
@@ -244,11 +255,41 @@ class LikeTests(APITestCase):
     def test_unlike(self):
         self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.user_test2_token)
         self.client.post(reverse('like_post', kwargs={'pk': self.post.pk}))
+        self.assertEqual(Post.objects.get(pk=self.post.pk).likes_count, 1)
 
         response = self.client.delete(reverse('like_post', kwargs={'pk': self.post.pk}))
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
         self.assertEqual(response.data['is_liked'], False)
         self.assertEqual(Like.objects.all().count(), 0)
+        self.assertEqual(Post.objects.get(pk=self.post.pk).likes_count, 0)
 
         response = self.client.delete(reverse('like_post', kwargs={'pk': self.post.pk}))
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+
+class ViewsPostTests(APITestCase):
+    def setUp(self) -> None:
+        self.user_test1 = ArtifactUser.objects.create(username='TestUser_1')
+        self.user_test2 = ArtifactUser.objects.create(username='TestUser_2')
+        self.post = Post.objects.create(description='AAA', author=self.user_test1)
+
+        self.user_test1_token = create_token(self.user_test1.id)['access_token']
+        self.user_test2_token = create_token(self.user_test2.id)['access_token']
+
+    def test_view_post(self):
+        self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.user_test2_token)
+        self.client.get(reverse('retrieve_update_destroy_post', kwargs={'pk': self.post.pk}))
+
+        self.assertEqual(PostView.objects.all().exists(), True)
+        self.assertEqual(PostView.objects.get(user=self.user_test2, post=self.post).count, 1)
+        self.assertEqual(Post.objects.get(pk=self.post.pk).views_count, 1)
+
+        self.client.get(reverse('retrieve_update_destroy_post', kwargs={'pk': self.post.pk}))
+        self.assertEqual(PostView.objects.get(user=self.user_test2, post=self.post).count, 1)
+        self.assertEqual(Post.objects.get(pk=self.post.pk).views_count, 1)
+
+        self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.user_test1_token)
+        self.client.get(reverse('retrieve_update_destroy_post', kwargs={'pk': self.post.pk}))
+        self.assertEqual(PostView.objects.get(user=self.user_test1, post=self.post).count, 1)
+        self.assertEqual(Post.objects.get(pk=self.post.pk).views_count, 2)
+        self.assertEqual(PostView.objects.all().count(), 2)

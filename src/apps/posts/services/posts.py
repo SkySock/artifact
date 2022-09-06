@@ -1,5 +1,10 @@
-from django.http import Http404
+import datetime
 
+from django.db import transaction
+from django.http import Http404
+from django.utils import timezone
+
+from src.apps.posts.models.view import PostView
 from src.apps.posts.tasks import publish
 from src.apps.posts.models.post import Post
 from src.apps.subscription.models import UserSubscriptionType
@@ -26,6 +31,19 @@ class PostService:
             return True
 
         return False
+
+    @transaction.atomic
+    def add_view(self, user: ArtifactUser, post: Post):
+        try:
+            view: PostView = PostView.objects.get(user=user, post=post)
+        except PostView.DoesNotExist:
+            view: PostView = PostView.objects.create(user=user, post=post)
+            post.add_view()
+
+        if view.last_view <= timezone.now() - datetime.timedelta(minutes=15):
+            post.add_view()
+            view.count += 1
+            view.save()
 
     def publish(self, pk, publication_at=None):
         if publication_at:

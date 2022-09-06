@@ -5,7 +5,7 @@ from src.apps.posts.models.post import Post
 class PostView(models.Model):
     user = models.ForeignKey('users.ArtifactUser', on_delete=models.CASCADE, related_name='viewed_posts')
     post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='viewed_users')
-    count = models.IntegerField()
+    count = models.IntegerField(default=1)
     first_view = models.DateTimeField(auto_now_add=True)
     last_view = models.DateTimeField(auto_now=True)
 

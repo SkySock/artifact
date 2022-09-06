@@ -39,6 +39,12 @@ class RetrieveUpdateDestroyPostView(mixins.RetrieveModelMixin,
     }
     queryset = Post.objects.all().prefetch_related('content')
 
+    def retrieve(self, request, *args, **kwargs):
+        instance: Post = self.get_object()
+        post_service.add_view(self.request.user, instance)
+        serializer = self.get_serializer(instance)
+        return Response(serializer.data)
+
 
 @extend_schema(
         request=PostMediaContentSerializer,

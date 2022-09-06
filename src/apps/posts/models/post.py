@@ -45,6 +45,10 @@ class Post(models.Model):
         self.likes_count += 1
         self.save()
 
+    def add_view(self):
+        self.views_count += 1
+        self.save()
+
     def delete_like(self):
         self.likes_count -= 1
         self.save()
