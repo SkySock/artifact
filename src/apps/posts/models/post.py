@@ -1,12 +1,18 @@
 from django.core.validators import FileExtensionValidator
 from django.db import models
 from django.utils import timezone
+from django.utils.translation import gettext_lazy as _
 
 from src.base.services import get_path_upload_post_file
 from src.base.validators import FileSizeValidator
 
 
 class Post(models.Model):
+    class Status(models.TextChoices):
+        DRAFT = 'draft', _('Draft')
+        WAITING = 'waiting', _('Waiting for publish')
+        PUBLISHED = 'published', _('Post is published')
+
     author = models.ForeignKey('users.ArtifactUser', on_delete=models.CASCADE, related_name="posts")
     views_count = models.IntegerField(default=0)
     likes_count = models.IntegerField(default=0)
@@ -21,7 +27,7 @@ class Post(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     publication_at = models.DateTimeField(null=True, blank=True)
     description = models.TextField(max_length=2000, blank=True)
-    is_published = models.BooleanField(default=False)
+    status = models.CharField(max_length=16, choices=Status.choices, default=Status.DRAFT)
 
     class Meta:
         ordering = ('-publication_at', )
@@ -36,9 +42,9 @@ class Post(models.Model):
         return self.likes.count()
 
     def publish(self) -> None:
-        if not self.is_published:
+        if self.status != self.Status.PUBLISHED:
             self.publication_at = timezone.now()
-            self.is_published = True
+            self.status = self.Status.PUBLISHED
             self.save()
 
     def add_like(self):

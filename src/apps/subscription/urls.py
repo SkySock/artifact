@@ -11,5 +11,5 @@ urlpatterns = [
         'patch': 'partial_update',
         'delete': 'destroy',
     })),
-    path("<int:pk>/subscribe", views.SubscriptionView.as_view()),
+    path("<int:pk>/subscribe/", views.SubscriptionView.as_view()),
 ]

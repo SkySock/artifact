@@ -1,10 +1,14 @@
 import io
+from datetime import timedelta
+from time import sleep
+
 from PIL import Image
 from django.core.files.uploadedfile import SimpleUploadedFile
 
 from django.test import TestCase
 from django.core.files import File
 from django.urls import reverse
+from django.utils import timezone
 from rest_framework import status
 from rest_framework.test import APITestCase
 from unittest import mock
@@ -199,6 +203,14 @@ class PostTests(APITestCase):
         post = Post.objects.create(description='AAA', author=self.user_test1, level_subscription=self.sub3)
         response = self.client.get(reverse('retrieve_update_destroy_post', kwargs={'pk': post.pk}))
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_publish_post(self):
+        self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.user_test1_token)
+        post = Post.objects.create(description='AAA', author=self.user_test1, level_subscription=self.sub3)
+        self.assertEqual(Post.objects.get(pk=post.pk).status, 'draft')
+        response = self.client.post(reverse('to_publish_post', kwargs={'pk': post.pk}))
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(Post.objects.get(pk=post.pk).status, 'published')
 
 
 class LikeTests(APITestCase):

@@ -40,14 +40,24 @@ class PreviewPostSerializer(serializers.ModelSerializer):
 
     @extend_schema_field(field=serializers.ImageField())
     def get_preview(self, post: Post):
-        return post.content.first()
+        media_content: MediaContent = post.content.first()
+        if isinstance(media_content, MediaContent):
+
+            try:
+                url = media_content.file.url
+            except AttributeError:
+                return ''
+            request = self.context.get('request', None)
+            if request is not None:
+                return request.build_absolute_uri(url)
+            return url
+        return ''
 
 
 class PostMediaContentSerializer(serializers.ModelSerializer):
     class Meta:
         model = MediaContent
-        fields = ('file', 'queue_mark', )
-        read_only_fields = ['post', ]
+        fields = ('id', 'file', )
 
 
 class PostSerializer(serializers.ModelSerializer):
@@ -63,11 +73,11 @@ class PostSerializer(serializers.ModelSerializer):
             'level_subscription',
             'author',
             'publication_at',
-            'is_published',
             'views_count',
             'likes_count',
+            'status',
         )
-        read_only_fields = ('views_count', 'likes_count', 'author', 'is_published', 'publication_at', )
+        read_only_fields = ('views_count', 'likes_count', 'author', 'publication_at', 'status', )
 
 
 class CreatePostSerializer(serializers.ModelSerializer):
@@ -75,8 +85,8 @@ class CreatePostSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Post
-        fields = ('id', 'description', 'content', 'level_subscription', 'publication_at', )
-        read_only_fields = ('publication_at', )
+        fields = ('id', 'description', 'content', 'level_subscription', 'publication_at', 'status', )
+        read_only_fields = ('publication_at', 'status', )
 
     def validate_level_subscription(self, value):
         """

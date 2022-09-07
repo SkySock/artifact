@@ -66,13 +66,13 @@ class AddFileInPost(generics.CreateAPIView):
         serializer.is_valid(raise_exception=True)
 
         post = self.get_post_object()
-        if post.is_published:
+        if post.status == Post.Status.PUBLISHED:
             raise HttpResponseNotModified
 
         self.perform_create(serializer)
         headers = self.get_success_headers(serializer.data)
 
-        serializer_post = CreatePostSerializer(post)
+        serializer_post = CreatePostSerializer(post, context=self.get_serializer_context())
 
         return Response(serializer_post.data, status=status.HTTP_201_CREATED, headers=headers)
 
@@ -100,7 +100,7 @@ class ToPublishPostView(APIView):
 
     def get_object(self):
         try:
-            post = Post.objects.get(pk=self.kwargs.get('pk')).prefetch_related('content')
+            post = Post.objects.prefetch_related('content').get(pk=self.kwargs.get('pk'))
         except Post.DoesNotExist:
             raise Http404
 

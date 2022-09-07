@@ -51,15 +51,34 @@ class PostService:
                 post = Post.objects.get(pk=pk)
             except Post.DoesNotExist:
                 raise Http404
-            post.publication_at = publication_at
-            post.save()
 
-            publish.apply_async(
-                (pk, ),
-                eta=publication_at
-            )
+            if post.status == Post.Status.DRAFT:
+                post.publication_at = publication_at
+
+                publish.apply_async(
+                    (pk, ),
+                    eta=publication_at
+                )
+                post.status = Post.Status.WAITING
+                post.save()
         else:
             publish(pk)
+
+    def get_published_posts_queryset_by_user(self, user: ArtifactUser):
+        return Post.objects.select_related('author').filter(
+            author=user,
+            status=Post.Status.PUBLISHED,
+        )
+
+    def get_draft_posts_queryset_by_user(self, user: ArtifactUser):
+        return Post.objects.select_related('author')\
+            .filter(author=user, status=Post.Status.DRAFT)\
+            .order_by('-created_at')
+
+    def get_waiting_publish_posts_queryset_by_user(self, user: ArtifactUser):
+        return Post.objects.select_related('author')\
+            .filter(author=user, status=Post.Status.WAITING)\
+            .order_by('-publication_at')
 
 
 post_service = PostService()
