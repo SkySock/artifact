@@ -168,6 +168,69 @@ class PostTests(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
+    def test_success_destroy_file(self):
+        self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.user_test1_token)
+        response = self.client.post(reverse('create_post'))
+        post_id = response.data['id']
+
+        self.client.post(
+            reverse('add_file_post', kwargs={'pk': post_id}),
+            data={
+                'file': self.file_mock
+            }
+        )
+        self.client.post(
+            reverse('add_file_post', kwargs={'pk': post_id}),
+            data={
+                'file': self.file_mock
+            }
+        )
+        self.assertEqual(Post.objects.get(pk=post_id).content.count(), 2)
+        files = Post.objects.get(pk=post_id).content.all()
+
+        response = self.client.delete(reverse('delete_file', kwargs={'pk': post_id, 'file_id': files[0].id}))
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertEqual(Post.objects.get(pk=post_id).content.count(), 1)
+
+        self.client.delete(reverse('delete_file', kwargs={'pk': post_id, 'file_id': files[0].id}))
+        self.assertEqual(Post.objects.get(pk=post_id).content.count(), 0)
+
+    def test_invalid_destroy_file(self):
+        self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.user_test1_token)
+        response = self.client.post(reverse('create_post'))
+        post_id = response.data['id']
+
+        self.client.post(
+            reverse('add_file_post', kwargs={'pk': post_id}),
+            data={
+                'file': self.file_mock
+            }
+        )
+        self.client.post(
+            reverse('add_file_post', kwargs={'pk': post_id}),
+            data={
+                'file': self.file_mock
+            }
+        )
+        self.assertEqual(Post.objects.get(pk=post_id).content.count(), 2)
+        files = Post.objects.get(pk=post_id).content.all()
+
+        response = self.client.delete(reverse('delete_file', kwargs={'pk': post_id, 'file_id': 1000}))
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+        response = self.client.delete(reverse('delete_file', kwargs={'pk': 1000, 'file_id': files[0].id}))
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+        self.client.post(reverse('to_publish_post', kwargs={'pk': post_id}))
+        response = self.client.delete(reverse('delete_file', kwargs={'pk': post_id, 'file_id': files[0].id}))
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+        self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.user_test2_token)
+        response = self.client.delete(reverse('delete_file', kwargs={'pk': post_id, 'file_id': files[0].id}))
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(Post.objects.get(pk=post_id).content.count(), 2)
+
+
     def test_valid_destroy_post(self):
         self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.user_test1_token)
         post = Post.objects.create(description='AAA', author=self.user_test1)

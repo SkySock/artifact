@@ -1,5 +1,6 @@
 from django.contrib import admin
 from django.urls import path, include
+from src.apps.posts.views.posts import DeleteFilePost
 
 urlpatterns = [
     path('auth/', include('src.apps.artifact_auth.urls')),

@@ -9,6 +9,7 @@ urlpatterns = [
         'delete': 'destroy',
     }), name='retrieve_update_destroy_post'),
     path('<int:pk>/file/', posts.AddFileInPost.as_view(), name='add_file_post'),
+    path('<int:pk>/file/<int:file_id>/', posts.DeleteFilePost.as_view(), name='delete_file'),
     path('<int:pk>/publish/', posts.ToPublishPostView.as_view(), name='to_publish_post'),
     path('<int:pk>/like/', likes.LikeView.as_view(), name='like_post')
 ]

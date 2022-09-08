@@ -1,6 +1,6 @@
 from rest_framework.permissions import BasePermission, SAFE_METHODS
 
-from src.apps.posts.models.post import Post
+from src.apps.posts.models.post import Post, MediaContent
 from src.apps.posts.services.posts import post_service
 from src.apps.subscription.models import UserSubscriptionType
 from src.apps.users.models import ArtifactUser, SocialLink
@@ -17,6 +17,11 @@ class IsOptions(BasePermission):
 class IsPostAuthor(BasePermission):
     def has_object_permission(self, request, view, obj: Post):
         return obj.author == request.user
+
+
+class IsPostFileOwner(BasePermission):
+    def has_object_permission(self, request, view, obj: MediaContent):
+        return obj.post.author == request.user
 
 
 class IsAccessPost(BasePermission):

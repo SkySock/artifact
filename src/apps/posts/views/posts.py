@@ -1,16 +1,19 @@
 from django.http import HttpResponseNotModified, Http404
-from drf_spectacular.utils import extend_schema
+from drf_spectacular.types import OpenApiTypes
+from drf_spectacular.utils import extend_schema, OpenApiParameter
 from rest_framework import generics, status, viewsets, serializers, mixins
+from rest_framework.exceptions import PermissionDenied
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.views import APIView
 
 from src.apps.users.serializers import PublicationAtSerializer
 from src.apps.posts.services.posts import post_service
-from src.apps.posts.models.post import Post
+from src.apps.posts.models.post import Post, MediaContent
 from src.apps.posts.serializers.posts import PostSerializer, PostMediaContentSerializer, CreatePostSerializer
 from src.base.classes import ActionPermissionMixin, ActionSerializerMixin
-from src.base.permissions import IsPostAuthor, IsAccessPost
+from src.base.exceptions import PostNotModified
+from src.base.permissions import IsPostAuthor, IsAccessPost, IsPostFileOwner
 
 
 class CreatePostView(generics.CreateAPIView):
@@ -67,7 +70,7 @@ class AddFileInPost(generics.CreateAPIView):
 
         post = self.get_post_object()
         if post.status == Post.Status.PUBLISHED:
-            raise HttpResponseNotModified
+            raise PostNotModified
 
         self.perform_create(serializer)
         headers = self.get_success_headers(serializer.data)
@@ -79,6 +82,26 @@ class AddFileInPost(generics.CreateAPIView):
     def perform_create(self, serializer, **kwargs):
         post = self.get_post_object()
         serializer.save(post=post)
+
+
+class DeleteFilePost(generics.DestroyAPIView):
+    permission_classes = (IsAuthenticated, IsPostFileOwner,)
+    serializer_class = PostMediaContentSerializer
+
+    def get_queryset(self):
+        return MediaContent.objects.filter(post=self.kwargs.get('pk'))
+
+    def get_object(self):
+        files = self.get_queryset()
+        obj = generics.get_object_or_404(files, pk=self.kwargs.get('file_id'))
+        self.check_object_permissions(self.request, obj)
+
+        return obj
+
+    def perform_destroy(self, instance: MediaContent):
+        if instance.post.status == Post.Status.PUBLISHED:
+            raise PostNotModified
+        super().perform_destroy(instance)
 
 
 @extend_schema(
