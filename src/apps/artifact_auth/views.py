@@ -9,6 +9,7 @@ from rest_framework.response import Response
 from src.base.permissions import IsOptions
 from .serializers import TelegramAuthSerializer, UserDetailSerializer, TelegramAuthResponseSerializer
 from .services.telegram import check_telegram_auth
+from .scheme import JWTTokenScheme
 
 
 @extend_schema(

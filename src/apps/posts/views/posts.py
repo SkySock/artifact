@@ -113,6 +113,8 @@ class ToPublishPostView(APIView):
 
     def post(self, request, pk):
         post = self.get_object()
+        if post.status == Post.Status.PUBLISHED:
+            raise PostNotModified
 
         serializer = PublicationAtSerializer(data=self.request.data)
         serializer.is_valid(raise_exception=True)
