@@ -11,7 +11,7 @@ Backend API платформы для продвижения и монетиза
 ### Запуск с Docker
 
 1. Склонировать репозиторий
-2. В корне проекта создать и заполнить файл .end.dev
+2. В корне проекта создать и заполнить файл `.env.dev`
 ```
 DEBUG=1
 SECRET_KEY=your-secret-key
@@ -29,8 +29,8 @@ POSTGRES_PASSWORD=artifact_password
 
 TELEGRAM_BOT_TOKEN=your_telegram_bot_token
 
-REDIS_HOST='redis'
-REDIS_PORT=6379
+RABBIT_HOST='broker'
+RABBIT_PORT=5672
 ```
 3. Собрать образ
 ```
