@@ -22,7 +22,11 @@ class PostService:
 
         access_subscription: UserSubscriptionType = post.level_subscription
 
-        user_subscription = subs_relations.get_subscription_on_user(user, post.author).subscription
+        subs_rel = subs_relations.get_subscription_on_user(user, post.author)
+        if not subs_rel:
+            return False
+
+        user_subscription = subs_rel.subscription
 
         if not user_subscription:
             return False
