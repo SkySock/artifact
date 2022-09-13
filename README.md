@@ -40,6 +40,18 @@ docker-compose build
 ```
 docker-compose up
 ```
+5. Создать и применить миграции
+```commandline
+docker exec -ti artifact-api-1 /bin/bash
+```
+```commandline
+poetry run ./src/manage.py makemigrations
+poetry run ./src/manage.py migrate
+```
+6. Запуск тестов
+```commandline
+docker exec artifact-api-1 poetry run ./src/manage.py test
+```
 
 ### Swager UI
 http://127.0.0.1:25566/api/v1/schema/swagger-ui/
