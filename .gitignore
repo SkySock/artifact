@@ -7,7 +7,6 @@ idea
 db.sqlite3
 
 results.db
-rabbitmq
 celerybeat-schedule
 
 venv
