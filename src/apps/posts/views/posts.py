@@ -1,3 +1,4 @@
+from django.db.models import Exists, OuterRef
 from django.http import HttpResponseNotModified, Http404
 from drf_spectacular.utils import extend_schema, OpenApiParameter
 from rest_framework import generics, status, viewsets, serializers, mixins
@@ -6,6 +7,7 @@ from rest_framework.response import Response
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.views import APIView
 
+from src.apps.users.models import ArtifactUser
 from src.apps.users.serializers import PublicationAtSerializer
 from src.apps.posts.services.posts import post_service
 from src.apps.posts.models.post import Post, MediaContent
@@ -39,7 +41,13 @@ class RetrieveUpdateDestroyPostView(mixins.RetrieveModelMixin,
         'partial_update': CreatePostSerializer,
         'retrieve': PostSerializer,
     }
-    queryset = Post.objects.all().prefetch_related('content')
+
+    def get_queryset(self):
+        this_user: ArtifactUser = self.request.user
+        posts = Post.objects.annotate(
+            is_liked=Exists(this_user.liked_posts.filter(post=OuterRef('id')))
+        ).select_related('author').prefetch_related('content')
+        return posts
 
     def retrieve(self, request, *args, **kwargs):
         instance: Post = self.get_object()

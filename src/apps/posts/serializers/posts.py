@@ -4,6 +4,7 @@ from rest_framework import serializers, exceptions
 
 from src.apps.posts.models.post import Post, MediaContent
 from src.apps.posts.services.posts import post_service
+from src.apps.subscription.serializers import SubscriptionTypeForPostsSerializer
 from src.apps.users.models import ArtifactUser
 from src.apps.users.serializers import UserBaseSerializer
 
@@ -12,6 +13,7 @@ class PreviewPostSerializer(serializers.ModelSerializer):
     author = UserBaseSerializer(read_only=True)
     access = serializers.SerializerMethodField()
     preview = serializers.SerializerMethodField()
+    level_subscription = SubscriptionTypeForPostsSerializer(read_only=True)
 
     class Meta:
         model = Post
@@ -63,6 +65,7 @@ class PostMediaContentSerializer(serializers.ModelSerializer):
 class PostSerializer(serializers.ModelSerializer):
     content = PostMediaContentSerializer(many=True, read_only=True)
     author = UserBaseSerializer(read_only=True)
+    is_liked = serializers.BooleanField(read_only=True)
 
     class Meta:
         model = Post
@@ -76,6 +79,7 @@ class PostSerializer(serializers.ModelSerializer):
             'views_count',
             'likes_count',
             'status',
+            'is_liked',
         )
         read_only_fields = ('views_count', 'likes_count', 'author', 'publication_at', 'status', )
 

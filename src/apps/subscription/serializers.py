@@ -56,5 +56,11 @@ class UserSubscriptionDetailSerializer(serializers.ModelSerializer):
         return True
 
 
+class SubscriptionTypeForPostsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserSubscriptionType
+        fields = ('id', 'name',)
+
+
 class SubscriptionSerializer(serializers.Serializer):
     is_subscribed = serializers.BooleanField()
