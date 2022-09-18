@@ -333,7 +333,7 @@ class LikeTests(APITestCase):
         self.assertEqual(Post.objects.get(pk=self.post.pk).likes_count, 1)
 
         response = self.client.delete(reverse('like_post', kwargs={'pk': self.post.pk}))
-        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data['is_liked'], False)
         self.assertEqual(Like.objects.all().count(), 0)
         self.assertEqual(Post.objects.get(pk=self.post.pk).likes_count, 0)
