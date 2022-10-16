@@ -12,7 +12,7 @@ Backend API платформы для продвижения и монетиза
 
 1. Склонировать репозиторий
 2. В корне проекта создать и заполнить файл `.env.dev`
-```
+```dotenv
 DEBUG=1
 SECRET_KEY=your-secret-key
 DJANGO_ALLOWED_HOSTS='localhost 127.0.0.1'
@@ -33,11 +33,11 @@ RABBIT_HOST='broker'
 RABBIT_PORT=5672
 ```
 3. Собрать образ
-```
+```commandline
 docker-compose build
 ```
 4. Запустить
-```
+```commandline
 docker-compose up
 ```
 5. Создать и применить миграции
@@ -45,12 +45,12 @@ docker-compose up
 docker exec -ti artifact-api-1 /bin/bash
 ```
 ```commandline
-poetry run ./src/manage.py makemigrations
-poetry run ./src/manage.py migrate
+poetry run python ./src/manage.py makemigrations
+poetry run python ./src/manage.py migrate
 ```
 6. Запуск тестов
 ```commandline
-docker exec artifact-api-1 poetry run ./src/manage.py test
+docker exec artifact-api-1 poetry run python ./src/manage.py test
 ```
 
 ### Swager UI
